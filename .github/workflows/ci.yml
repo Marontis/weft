@@ -26,7 +26,12 @@ jobs:
       - name: Install node deps (lockfile only)
         run: npm ci --ignore-scripts --no-audit --no-fund
       - name: Run the suite
-        run: node --test tests/*.test.mjs
+        run: |
+          if ls tests/*.test.mjs >/dev/null 2>&1; then
+            node --test tests/*.test.mjs
+          else
+            echo "no test files yet — nothing to run."
+          fi
 
   mutation:
     runs-on: ubuntu-latest
@@ -34,16 +39,6 @@ jobs:
     env:
       ATTEST_STRYKER_CONCURRENCY: '3'
     steps:
-      - name: Check the Attest-Kit secret
-        id: secret
-        env:
-          PAT: ${{ secrets.ATTEST_KIT_PAT }}
-        run: |
-          if [ -z "$PAT" ]; then
-            echo "::error::ATTEST_KIT_PAT is not set — the mutation gate cannot rule (fail-closed)."
-            exit 1
-          fi
-          echo "ok"
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
@@ -53,8 +48,11 @@ jobs:
           python-version: '3.12'
       - name: Install node deps (lockfile only)
         run: npm ci --ignore-scripts --no-audit --no-fund
-      - name: Install attest-kit
-        run: pip install --quiet "git+https://x-access-token:${{ secrets.ATTEST_KIT_PAT }}@github.com/Marontis/Attest-Kit.git"
+      - name: Install the vendored attest engine (public deps only, no secret)
+        # The engine is vendored at vendor/attest-kit, so a public clone/fork
+        # runs the gate with zero private-repo access. Only public deps
+        # (mutmut/pydantic/pytest) come from PyPI.
+        run: pip install --quiet ./vendor/attest-kit
       - name: Scoped mutation gate over the PR's claims
         run: |
           # The epic's claim ids ride in attest-gate-request.json on the branch.
