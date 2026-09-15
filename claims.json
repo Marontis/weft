@@ -1,1 +1,20 @@
-{"schemaVersion": 1, "claims": []}
+{
+  "schemaVersion": 1,
+  "claims": [
+    {
+      "id": "WFT-01",
+      "description": "tokenize produces position-carrying tokens: every token records the 1-based line and col of its first character, and token types/values match DESIGN.md section 2 exactly",
+      "status": "active"
+    },
+    {
+      "id": "WFT-02",
+      "description": "string literals decode exactly the escapes \\\" \\\\ \\n \\t; an unterminated string raises WeftError at the opening quote and an unknown escape raises WeftError at the backslash",
+      "status": "active"
+    },
+    {
+      "id": "WFT-03",
+      "description": "comments from ; to end of line produce no tokens and do not disturb the line/col positions of surrounding tokens",
+      "status": "active"
+    }
+  ]
+}
