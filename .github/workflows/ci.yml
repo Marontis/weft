@@ -1,0 +1,76 @@
+# PR gate for fleet-authored epics. The fleet publishes each epic to a
+# branch and opens a PR; nothing reaches main until BOTH checks below are
+# green. This is the merge-on-green contract — no direct pushes to main.
+#
+#   suite     — the full test suite (the fast Tier-1 equivalent on GitHub).
+#   mutation  — the scoped mutation gate over the epic's claims (Tier-2):
+#               proves those tests are load-bearing, not just present.
+name: CI
+on:
+  pull_request:
+    branches: [main]
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  suite:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - name: Install node deps (lockfile only)
+        run: npm ci --ignore-scripts --no-audit --no-fund
+      - name: Run the suite
+        run: node --test tests/*.test.mjs
+
+  mutation:
+    runs-on: ubuntu-latest
+    timeout-minutes: 150
+    env:
+      ATTEST_STRYKER_CONCURRENCY: '3'
+    steps:
+      - name: Check the Attest-Kit secret
+        id: secret
+        env:
+          PAT: ${{ secrets.ATTEST_KIT_PAT }}
+        run: |
+          if [ -z "$PAT" ]; then
+            echo "::error::ATTEST_KIT_PAT is not set — the mutation gate cannot rule (fail-closed)."
+            exit 1
+          fi
+          echo "ok"
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install node deps (lockfile only)
+        run: npm ci --ignore-scripts --no-audit --no-fund
+      - name: Install attest-kit
+        run: pip install --quiet "git+https://x-access-token:${{ secrets.ATTEST_KIT_PAT }}@github.com/Marontis/Attest-Kit.git"
+      - name: Scoped mutation gate over the PR's claims
+        run: |
+          # The epic's claim ids ride in attest-gate-request.json on the branch.
+          # No request = a PR that gates no claims (e.g. the playground epic):
+          # the suite job alone is the gate, so this is a clean pass, never a
+          # full-tree sweep.
+          if [ ! -f attest-gate-request.json ]; then
+            echo "no attest-gate-request.json on this branch — no claims to mutate; suite is the gate."
+            exit 0
+          fi
+          CLAIMS=$(python -c "import json; print(' '.join(json.load(open('attest-gate-request.json')).get('claims', [])))")
+          if [ -z "$(echo $CLAIMS | tr -d '[:space:]')" ]; then
+            echo "gate request lists no claims — nothing to mutate."
+            exit 0
+          fi
+          echo "gating claims: $CLAIMS"
+          ARGS=""
+          for c in $CLAIMS; do ARGS="$ARGS --claim $c"; done
+          attest check $ARGS
