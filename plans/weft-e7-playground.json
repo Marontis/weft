@@ -1,0 +1,40 @@
+{
+  "name": "weft-e7-playground",
+  "claims": [],
+  "tasks": [
+    {
+      "key": "playground",
+      "description": "Create index.html: a static, dependency-free playground that imports { run, format, WeftError } from ./src/index.mjs via <script type=\"module\">, with a textarea for source, Run and Format buttons, and an output area showing printed output, the final value (rendered via str through run), and WeftError positions on failure. No external network references of any kind. It must satisfy scripts/check_playground.mjs (read it).",
+      "claims": [],
+      "allowed_reads": [
+        "docs/DESIGN.md",
+        "src/**",
+        "scripts/check_playground.mjs"
+      ],
+      "allowed_writes": [
+        "index.html"
+      ],
+      "verification_cmd": "node --test tests/*.test.mjs && node scripts/check_playground.mjs",
+      "max_retries": 3
+    },
+    {
+      "key": "examples-golden",
+      "description": "Write three example weft programs in examples/ (fizzbuzz.weft using recursion and print; pipeline.weft chaining map/filter/reduce with print of the result; strings.weft exercising the string builtins) and tests/golden.test.mjs which run()s each file (read with node:fs) and asserts the COMPLETE expected output strings. Programs must follow docs/DESIGN.md exactly.",
+      "claims": [],
+      "allowed_reads": [
+        "docs/DESIGN.md",
+        "src/**",
+        "tests/**",
+        "examples/**"
+      ],
+      "allowed_writes": [
+        "examples/fizzbuzz.weft",
+        "examples/pipeline.weft",
+        "examples/strings.weft",
+        "tests/golden.test.mjs"
+      ],
+      "verification_cmd": "node --test tests/*.test.mjs",
+      "max_retries": 3
+    }
+  ]
+}

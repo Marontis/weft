@@ -1,0 +1,9 @@
+{
+  "name": "weft",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Mutation-testing toolchain for the Attest-Kit gate. Weft itself has no npm dependencies.",
+  "devDependencies": {
+    "@stryker-mutator/core": "^8.7.1"
+  }
+}

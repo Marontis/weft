@@ -1,0 +1,73 @@
+{
+  "name": "weft-e2-parser",
+  "claims": [
+    {
+      "id": "WFT-04",
+      "description": "parse builds exactly the documented AST node shapes {t,v/name/items,line,col} for nums, strs, syms and nested lists, with list position at the opening paren"
+    },
+    {
+      "id": "WFT-05",
+      "description": "'x parses to a two-item list (quote x) whose position is the quote character's position"
+    },
+    {
+      "id": "WFT-06",
+      "description": "an unclosed ( raises WeftError at that paren's position with message starting 'unclosed (' and a stray ) raises WeftError at its position with message starting 'unexpected )'"
+    }
+  ],
+  "tasks": [
+    {
+      "key": "parser-core",
+      "description": "Create src/parser.mjs with parse() per DESIGN.md section 3: consume tokenize() output into the exact node shapes of the spec (keys t, v/name/items, line, col), supporting any number of top-level forms and arbitrary nesting. Tests in tests/parser.test.mjs must deep-equal whole ASTs including positions.",
+      "claims": [
+        "WFT-04"
+      ],
+      "allowed_reads": [
+        "docs/DESIGN.md",
+        "src/**",
+        "tests/**"
+      ],
+      "allowed_writes": [
+        "src/parser.mjs",
+        "tests/parser.test.mjs"
+      ],
+      "verification_cmd": "node --test tests/*.test.mjs",
+      "max_retries": 3
+    },
+    {
+      "key": "parser-quote",
+      "description": "Extend src/parser.mjs with the ' sugar per DESIGN.md sections 1 and 3: 'x becomes (quote x) with the synthesized list positioned at the quote character; works nested ('('a b) etc.). Tests in tests/parser-quote.test.mjs.",
+      "claims": [
+        "WFT-05"
+      ],
+      "allowed_reads": [
+        "docs/DESIGN.md",
+        "src/**",
+        "tests/**"
+      ],
+      "allowed_writes": [
+        "src/parser.mjs",
+        "tests/parser-quote.test.mjs"
+      ],
+      "verification_cmd": "node --test tests/*.test.mjs",
+      "max_retries": 3
+    },
+    {
+      "key": "parser-errors",
+      "description": "Extend src/parser.mjs with the two error contracts of DESIGN.md section 3 (unclosed ( at its own position, unexpected ) at its position, exact message prefixes). Tests in tests/parser-errors.test.mjs must assert message prefix AND line/col.",
+      "claims": [
+        "WFT-06"
+      ],
+      "allowed_reads": [
+        "docs/DESIGN.md",
+        "src/**",
+        "tests/**"
+      ],
+      "allowed_writes": [
+        "src/parser.mjs",
+        "tests/parser-errors.test.mjs"
+      ],
+      "verification_cmd": "node --test tests/*.test.mjs",
+      "max_retries": 3
+    }
+  ]
+}
