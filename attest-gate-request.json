@@ -1,0 +1,15 @@
+{
+  "schemaVersion": 1,
+  "epic": "weft-e1-lexer",
+  "claims": [
+    "WFT-01",
+    "WFT-02",
+    "WFT-03"
+  ],
+  "tasks": [
+    "afb016c920a44a5985cfd4d0062b91c7",
+    "250d313495224b3ab47b0fd7f7613f6a",
+    "f3bc52df845b4e51b8a34f48f4f21c97"
+  ],
+  "requestedAt": "2026-09-15T22:59:41Z"
+}
