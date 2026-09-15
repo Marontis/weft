@@ -1,17 +1,10 @@
-# The async Tier-2 gate: the fleet driver (FLEET_GATE_MODE=async) publishes a
-# tiny attest-gate-request.json naming the claims an epic touched; this
-# workflow runs the SCOPED mutation check on a disposable runner and lands the
-# ruling as its own commit. Red here means a claim is vacuous — its tests pass
-# without constraining behavior — and the survivors sit in the committed
-# attest-record.json for the next CEGIS round. The agent proposes; this gate
-# disposes.
-name: Mutation gate
+# MANUAL re-rule only. The merge-on-green pipeline gates mutation on the PR
+# (see ci.yml, the `mutation` job) BEFORE anything reaches main, so the old
+# push-to-main trigger is retired — it would only re-run a sweep already
+# passed on the PR and commit a redundant ruling. Kept as workflow_dispatch
+# for one-off re-rules of a claim set against main.
+name: Mutation gate (manual)
 on:
-  push:
-    branches: [main]
-    # Repo-root path on purpose: .attest/ is gitignored, and an ignored
-    # trigger file can neither be committed nor fire this filter.
-    paths: ['attest-gate-request.json']
   workflow_dispatch:
     inputs:
       claims:
