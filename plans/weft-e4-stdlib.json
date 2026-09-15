@@ -1,0 +1,101 @@
+{
+  "name": "weft-e4-stdlib",
+  "claims": [
+    {
+      "id": "WFT-11",
+      "description": "list builtins honor their contracts: head/tail of the empty list raise WeftError 'empty list', nth is 0-based and bounds-checked, cons/concat/reverse never mutate their inputs"
+    },
+    {
+      "id": "WFT-12",
+      "description": "map, filter and reduce apply weft closures correctly; reduce requires an explicit initial value and folds left"
+    },
+    {
+      "id": "WFT-13",
+      "description": "string builtins implement DESIGN.md section 8: clamped str-slice, str-split/str-join round-trip, case ops, str-contains?, and WeftError 'expected string' on non-string primary arguments"
+    },
+    {
+      "id": "WFT-14",
+      "description": "render displays values canonically: integral floats without a decimal point, strings as-is, nil, booleans, nested lists parenthesized and space-separated, functions as <fn>"
+    }
+  ],
+  "tasks": [
+    {
+      "key": "stdlib-lists",
+      "description": "Create src/builtins-lists.mjs with list, head, tail, cons, len, nth, concat, reverse per DESIGN.md section 8 and register them in newGlobalEnv (modify src/env.mjs). Pin non-mutation by asserting the input array is unchanged after cons/concat/reverse. Tests in tests/stdlib-lists.test.mjs exercise everything THROUGH evaluate().",
+      "claims": [
+        "WFT-11"
+      ],
+      "allowed_reads": [
+        "docs/DESIGN.md",
+        "src/**",
+        "tests/**"
+      ],
+      "allowed_writes": [
+        "src/builtins-lists.mjs",
+        "src/env.mjs",
+        "tests/stdlib-lists.test.mjs"
+      ],
+      "verification_cmd": "node --test tests/*.test.mjs",
+      "max_retries": 3
+    },
+    {
+      "key": "stdlib-hof",
+      "description": "Extend src/builtins-lists.mjs with map, filter, reduce per DESIGN.md section 8. If applying a closure from a builtin needs a helper, export applyFn from src/evaluator.mjs and use it (modify evaluator minimally; do not change existing behavior). Tests in tests/stdlib-hof.test.mjs must use weft closures (fn ...) as the function arguments.",
+      "claims": [
+        "WFT-12"
+      ],
+      "allowed_reads": [
+        "docs/DESIGN.md",
+        "src/**",
+        "tests/**"
+      ],
+      "allowed_writes": [
+        "src/builtins-lists.mjs",
+        "src/evaluator.mjs",
+        "tests/stdlib-hof.test.mjs"
+      ],
+      "verification_cmd": "node --test tests/*.test.mjs",
+      "max_retries": 3
+    },
+    {
+      "key": "stdlib-strings-math",
+      "description": "Create src/builtins-strings.mjs and src/builtins-math.mjs per DESIGN.md section 8 and register both in newGlobalEnv (modify src/env.mjs). Tests in tests/stdlib-strings.test.mjs cover slice clamping, split/join round-trips, case ops, contains?, the 'expected string' error, and the math ops including mod sign semantics.",
+      "claims": [
+        "WFT-13"
+      ],
+      "allowed_reads": [
+        "docs/DESIGN.md",
+        "src/**",
+        "tests/**"
+      ],
+      "allowed_writes": [
+        "src/builtins-strings.mjs",
+        "src/builtins-math.mjs",
+        "src/env.mjs",
+        "tests/stdlib-strings.test.mjs"
+      ],
+      "verification_cmd": "node --test tests/*.test.mjs",
+      "max_retries": 3
+    },
+    {
+      "key": "stdlib-render",
+      "description": "Create src/render.mjs with render(value) per DESIGN.md section 8, then add the str and print builtins to src/builtins-core.mjs (print appends to the global env's __out and returns nil) and ensure registration. Tests in tests/stdlib-render.test.mjs pin every rendering rule including 42 vs 42.5, nested lists, and <fn>.",
+      "claims": [
+        "WFT-14"
+      ],
+      "allowed_reads": [
+        "docs/DESIGN.md",
+        "src/**",
+        "tests/**"
+      ],
+      "allowed_writes": [
+        "src/render.mjs",
+        "src/builtins-core.mjs",
+        "src/env.mjs",
+        "tests/stdlib-render.test.mjs"
+      ],
+      "verification_cmd": "node --test tests/*.test.mjs",
+      "max_retries": 3
+    }
+  ]
+}

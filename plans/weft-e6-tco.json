@@ -1,0 +1,51 @@
+{
+  "name": "weft-e6-tco",
+  "claims": [
+    {
+      "id": "WFT-17",
+      "description": "calls in tail position (last form of do/let/fn bodies, both if branches, final and/or operand) execute in constant stack: self-recursion and mutual recursion to 100000 iterations both complete"
+    },
+    {
+      "id": "WFT-18",
+      "description": "non-tail recursion depth is capped at 10000 nested applies, raising WeftError 'stack depth exceeded' instead of a raw RangeError"
+    }
+  ],
+  "tasks": [
+    {
+      "key": "tco",
+      "description": "Rework the apply/eval loop in src/evaluator.mjs into a trampoline so that tail calls per DESIGN.md section 11 run in constant stack, WITHOUT changing any observable non-tail semantics (the whole existing suite must stay green). Tests in tests/tco.test.mjs: a countdown to 100000 via self-recursion and an even?/odd? mutual recursion to 100000.",
+      "claims": [
+        "WFT-17"
+      ],
+      "allowed_reads": [
+        "docs/DESIGN.md",
+        "src/**",
+        "tests/**"
+      ],
+      "allowed_writes": [
+        "src/evaluator.mjs",
+        "tests/tco.test.mjs"
+      ],
+      "verification_cmd": "node --test tests/*.test.mjs",
+      "max_retries": 3
+    },
+    {
+      "key": "depth-cap",
+      "description": "Add the non-tail depth cap per DESIGN.md section 11 to src/evaluator.mjs: 10000 nested NON-tail applies raise WeftError 'stack depth exceeded'; tail-recursive loops from the previous task must remain unaffected. Tests in tests/depth-cap.test.mjs pin both sides (a non-tail factorial past the cap fails with the exact message; the 100000 tail loop still passes).",
+      "claims": [
+        "WFT-18"
+      ],
+      "allowed_reads": [
+        "docs/DESIGN.md",
+        "src/**",
+        "tests/**"
+      ],
+      "allowed_writes": [
+        "src/evaluator.mjs",
+        "tests/depth-cap.test.mjs"
+      ],
+      "verification_cmd": "node --test tests/*.test.mjs",
+      "max_retries": 3
+    }
+  ]
+}

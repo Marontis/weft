@@ -1,0 +1,12 @@
+{
+  "testRunner": "command",
+  "commandRunner": {
+    "command": "node --test tests/*.test.mjs"
+  },
+  "coverageAnalysis": "off",
+  "reporters": [
+    "json"
+  ],
+  "concurrency": 2,
+  "tempDirName": ".stryker-tmp"
+}

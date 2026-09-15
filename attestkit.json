@@ -1,0 +1,11 @@
+{
+  "project": "weft",
+  "prefix": "WFT",
+  "claimsPath": "claims.json",
+  "statePath": ".attest/state.json",
+  "recordPath": "attest-record.json",
+  "reportPath": "docs/attestation/coverage.md",
+  "claimsDocPath": "docs/CLAIMS.md",
+  "taskBoardPath": "docs/task-board.md",
+  "intentDocPath": "docs/INTENT.md"
+}

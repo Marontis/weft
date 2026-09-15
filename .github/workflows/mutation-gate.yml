@@ -1,0 +1,122 @@
+# The async Tier-2 gate: the fleet driver (FLEET_GATE_MODE=async) publishes a
+# tiny attest-gate-request.json naming the claims an epic touched; this
+# workflow runs the SCOPED mutation check on a disposable runner and lands the
+# ruling as its own commit. Red here means a claim is vacuous — its tests pass
+# without constraining behavior — and the survivors sit in the committed
+# attest-record.json for the next CEGIS round. The agent proposes; this gate
+# disposes.
+name: Mutation gate
+on:
+  push:
+    branches: [main]
+    # Repo-root path on purpose: .attest/ is gitignored, and an ignored
+    # trigger file can neither be committed nor fire this filter.
+    paths: ['attest-gate-request.json']
+  workflow_dispatch:
+    inputs:
+      claims:
+        description: 'Space-separated claim ids (default: read attest-gate-request.json)'
+        required: false
+        default: ''
+
+concurrency:
+  group: mutation-gate
+  cancel-in-progress: false
+
+permissions:
+  contents: write
+
+jobs:
+  gate:
+    # never retrigger on this workflow's own ruling commit
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    timeout-minutes: 150
+    env:
+      # Right-size for the 4-core hosted runner: Stryker's command runner
+      # spawns several node processes per worker, so 3 workers ~ fills the box
+      # without thrashing it.
+      ATTEST_STRYKER_CONCURRENCY: '3'
+    steps:
+      - name: Check the Attest-Kit secret
+        id: secret
+        env:
+          PAT: ${{ secrets.ATTEST_KIT_PAT }}
+        run: |
+          if [ -z "$PAT" ]; then
+            echo "::warning::ATTEST_KIT_PAT secret is not set — the gate CANNOT rule. No record is written (fail-closed). Add the secret, then re-run via workflow_dispatch."
+            echo "present=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "present=true" >> "$GITHUB_OUTPUT"
+          fi
+
+      - uses: actions/checkout@v4
+        if: steps.secret.outputs.present == 'true'
+
+      - uses: actions/setup-node@v4
+        if: steps.secret.outputs.present == 'true'
+        with:
+          node-version: '20'
+
+      - uses: actions/setup-python@v5
+        if: steps.secret.outputs.present == 'true'
+        with:
+          python-version: '3.12'
+
+      - name: Install node deps (lockfile only)
+        if: steps.secret.outputs.present == 'true'
+        run: npm ci --ignore-scripts --no-audit --no-fund
+
+      - name: Install attest-kit
+        if: steps.secret.outputs.present == 'true'
+        run: pip install --quiet "git+https://x-access-token:${{ secrets.ATTEST_KIT_PAT }}@github.com/Marontis/Attest-Kit.git"
+
+      - name: Run the scoped gate
+        id: gate
+        if: steps.secret.outputs.present == 'true'
+        run: |
+          CLAIMS='${{ github.event.inputs.claims }}'
+          if [ -z "$CLAIMS" ]; then
+            CLAIMS=$(python -c "import json; print(' '.join(json.load(open('attest-gate-request.json'))['claims']))")
+          fi
+          if [ -z "$(echo $CLAIMS | tr -d '[:space:]')" ]; then
+            echo 'no claims requested - an epic with no gated claims is a no-op here, never a full-tree run'
+            echo "rc=0" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+          echo "gating claims: $CLAIMS"
+          ARGS=""
+          for c in $CLAIMS; do ARGS="$ARGS --claim $c"; done
+          set +e
+          attest check $ARGS --record
+          RC=$?
+          set -e
+          echo "attest check rc=$RC"
+          echo "rc=$RC" >> "$GITHUB_OUTPUT"
+
+      - name: Commit the ruling
+        if: steps.secret.outputs.present == 'true'
+        run: |
+          git config user.name attest-gate
+          git config user.email gate@users.noreply.github.com
+          git add attest-record.json
+          git commit -m "attest: async mutation gate ruling (run ${{ github.run_id }})" \
+            || echo "record unchanged — nothing to commit"
+          # main may move while a long sweep runs (another push,
+          # another ruling): rebase-retry so a green verdict lands.
+          for i in 1 2 3; do
+            git push && break
+            git pull --rebase origin main || exit 1
+          done
+
+      - name: Dispose
+        run: |
+          if [ "${{ steps.secret.outputs.present }}" != "true" ]; then
+            echo "::error::gate SKIPPED — no ATTEST_KIT_PAT secret; the requested claims are UNRULED"
+            exit 1
+          fi
+          if [ "${{ steps.gate.outputs.rc }}" != "0" ]; then
+            echo "::error::the gate found vacuous claims or undocumented survivors — see attest-record.json in the ruling commit"
+            exit 1
+          fi
+          echo "all requested claims discharged"

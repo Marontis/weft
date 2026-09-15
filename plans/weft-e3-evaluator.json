@@ -1,0 +1,98 @@
+{
+  "name": "weft-e3-evaluator",
+  "claims": [
+    {
+      "id": "WFT-07",
+      "description": "fn creates lexical closures: the defining environment is captured, calls get a child scope, def inside a function does not leak to the caller, and let shadows without mutating outer bindings"
+    },
+    {
+      "id": "WFT-08",
+      "description": "if, and, or are lazy: the untaken if branch and short-circuited and/or operands are never evaluated, and and/or return the deciding value"
+    },
+    {
+      "id": "WFT-09",
+      "description": "evaluating an unbound symbol raises WeftError 'unbound symbol: <name>' carrying that symbol node's line/col"
+    },
+    {
+      "id": "WFT-10",
+      "description": "core builtins implement DESIGN.md section 8 exactly: variadic + - * / including unary forms, division by zero raises WeftError, chained number-only comparisons, deep structural = over nested lists"
+    }
+  ],
+  "tasks": [
+    {
+      "key": "eval-core",
+      "description": "Create src/env.mjs (lookup/define/newGlobalEnv skeleton per DESIGN.md section 6 — newGlobalEnv registers nothing yet but creates __out) and src/evaluator.mjs with evalForm() handling literals, symbol lookup (WFT-09 contract), and the quote special form per section 5 (quote of a symbol yields its name as a string; quote of a list yields an array of quoted items). Tests in tests/eval-core.test.mjs.",
+      "claims": [
+        "WFT-09"
+      ],
+      "allowed_reads": [
+        "docs/DESIGN.md",
+        "src/**",
+        "tests/**"
+      ],
+      "allowed_writes": [
+        "src/env.mjs",
+        "src/evaluator.mjs",
+        "tests/eval-core.test.mjs"
+      ],
+      "verification_cmd": "node --test tests/*.test.mjs",
+      "max_retries": 3
+    },
+    {
+      "key": "eval-scope",
+      "description": "Extend src/evaluator.mjs with def, let, do, fn and function application per DESIGN.md section 7: closures capture the defining env, calls bind params in a child env, arity errors use the exact message shape, let binds sequentially, do returns last (empty do is nil). Tests in tests/eval-scope.test.mjs.",
+      "claims": [
+        "WFT-07"
+      ],
+      "allowed_reads": [
+        "docs/DESIGN.md",
+        "src/**",
+        "tests/**"
+      ],
+      "allowed_writes": [
+        "src/evaluator.mjs",
+        "tests/eval-scope.test.mjs"
+      ],
+      "verification_cmd": "node --test tests/*.test.mjs",
+      "max_retries": 3
+    },
+    {
+      "key": "eval-branch",
+      "description": "Extend src/evaluator.mjs with if, and, or per DESIGN.md section 7, including the truthiness rule of section 5 (only false and nil are falsy). Laziness must be pinned with side-effect probes (e.g. a def in the untaken branch must not run). Tests in tests/eval-branch.test.mjs.",
+      "claims": [
+        "WFT-08"
+      ],
+      "allowed_reads": [
+        "docs/DESIGN.md",
+        "src/**",
+        "tests/**"
+      ],
+      "allowed_writes": [
+        "src/evaluator.mjs",
+        "tests/eval-branch.test.mjs"
+      ],
+      "verification_cmd": "node --test tests/*.test.mjs",
+      "max_retries": 3
+    },
+    {
+      "key": "builtins-core",
+      "description": "Create src/builtins-core.mjs with + - * / = < > <= >= not per DESIGN.md section 8 (exact error messages; unary - and /; chained comparisons; deep structural =), register them in src/env.mjs newGlobalEnv, and create src/index.mjs exporting tokenize, parse, WeftError, newGlobalEnv, and evaluate(src, env?) per section 9 (run and format come in a later epic). Tests in tests/builtins-core.test.mjs must exercise the builtins THROUGH evaluate().",
+      "claims": [
+        "WFT-10"
+      ],
+      "allowed_reads": [
+        "docs/DESIGN.md",
+        "src/**",
+        "tests/**"
+      ],
+      "allowed_writes": [
+        "src/builtins-core.mjs",
+        "src/env.mjs",
+        "src/index.mjs",
+        "tests/builtins-core.test.mjs"
+      ],
+      "verification_cmd": "node --test tests/*.test.mjs",
+      "max_retries": 3
+    }
+  ]
+}
