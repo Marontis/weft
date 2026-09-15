@@ -1,0 +1,34 @@
+[build-system]
+requires = ["setuptools>=61"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "attest-engine"
+version = "0.1.0"
+description = "Attestation-Driven Development verification gate for AI agents"
+requires-python = ">=3.10"
+# Core stays installable into any consumer's env: the gate (scan / check /
+# report / verify-report) and the fastmcp-free harness commands need only
+# these. fastmcp lives in the [harness] extra because fastmcp 2.x pins
+# mcp<2.0, and a verification tool must not downgrade the very environment
+# whose tests it runs -- the first adopter it broke was an MCP service
+# requiring mcp>=2.1, whose own suite then failed under `attest check`.
+dependencies = [
+    "mutmut>=3.7,<4",
+    "pytest>=7.0",
+    "pydantic>=2.0",
+]
+
+[project.optional-dependencies]
+harness = [
+    "fastmcp>=0.1.0,<3",
+]
+
+[project.scripts]
+attest = "attest.cli:main"
+
+[tool.setuptools.packages.find]
+include = ["attest*"]
+
+[tool.pytest.ini_options]
+norecursedirs = ["tests/fixtures", ".git", ".venv", "__pycache__"]
