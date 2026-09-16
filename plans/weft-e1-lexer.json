@@ -2,24 +2,16 @@
   "name": "weft-e1-lexer",
   "claims": [
     {
-      "id": "WFT-01",
-      "description": "tokenize produces position-carrying tokens: every token records the 1-based line and col of its first character, and token types/values match DESIGN.md section 2 exactly"
-    },
-    {
-      "id": "WFT-02",
-      "description": "string literals decode exactly the escapes \\\" \\\\ \\n \\t; an unterminated string raises WeftError at the opening quote and an unknown escape raises WeftError at the backslash"
-    },
-    {
-      "id": "WFT-03",
-      "description": "comments from ; to end of line produce no tokens and do not disturb the line/col positions of surrounding tokens"
+      "id": "WFT-LEXER",
+      "description": "src/lexer.mjs: tokenize(src) per DESIGN.md sections 1-2 — correct token types/values, 1-based line:col at each token's first char, string escapes decoded, unterminated-string/unknown-escape errors at the right positions, ; comments skipped without disturbing positions"
     }
   ],
   "tasks": [
     {
       "key": "lexer-core",
-      "description": "Create src/errors.mjs (the WeftError class, DESIGN.md section 4) and src/lexer.mjs with tokenize() per section 2, covering numbers (including negatives and decimals), symbols, parens, the quote character, and whitespace — strings and comments come in later tasks; for now a double quote or semicolon may raise WeftError('not implemented', line, col). Tests in tests/lexer.test.mjs must pin token types, values, and exact 1-based line/col positions across multi-line input.",
+      "description": "Create src/errors.mjs (WeftError per DESIGN.md section 4) and src/lexer.mjs with tokenize() per section 2 for numbers (incl. negatives/decimals), symbols, parens, the quote char and whitespace (strings/comments come in later tasks; a \" or ; may raise WeftError('not implemented', line, col) for now). Tests in tests/lexer.test.mjs pin token types, values, and exact 1-based line:col across multi-line input. Write MUTATION-ADEQUATE tests: assert exact values, exact token positions (line:col), exact error messages/positions, and boundary conditions — not just the happy path (a suite that still passes when an operator/constant/boundary is changed is not load-bearing and fails the gate). Put '// @attest WFT-LEXER mutates=src/lexer.mjs' directly above the load-bearing test; never weaken or delete an existing assertion; the whole tests/ suite must stay green.",
       "claims": [
-        "WFT-01"
+        "WFT-LEXER"
       ],
       "allowed_reads": [
         "docs/DESIGN.md",
@@ -36,9 +28,9 @@
     },
     {
       "key": "lexer-strings",
-      "description": "Extend src/lexer.mjs (read it first; modify, do not rewrite unrelated parts) with double-quoted string literals per DESIGN.md section 2: decode escapes \\\" \\\\ \\n \\t, token type 'str' positioned at the opening quote; unterminated string and unknown escape raise WeftError with the exact positions and message prefixes the spec names. Tests in tests/lexer-strings.test.mjs.",
+      "description": "Extend src/lexer.mjs (read it first) with double-quoted strings per DESIGN.md sections 1-2: decode \\\" \\\\ \\n \\t, 'str' token at the opening quote; unterminated string and unknown escape raise WeftError at the exact positions with the spec's message prefixes. Tests in tests/lexer-strings.test.mjs. Write MUTATION-ADEQUATE tests: assert exact values, exact token positions (line:col), exact error messages/positions, and boundary conditions — not just the happy path (a suite that still passes when an operator/constant/boundary is changed is not load-bearing and fails the gate). Put '// @attest WFT-LEXER mutates=src/lexer.mjs' directly above the load-bearing test; never weaken or delete an existing assertion; the whole tests/ suite must stay green.",
       "claims": [
-        "WFT-02"
+        "WFT-LEXER"
       ],
       "allowed_reads": [
         "docs/DESIGN.md",
@@ -54,9 +46,9 @@
     },
     {
       "key": "lexer-comments",
-      "description": "Extend src/lexer.mjs with ; comments per DESIGN.md section 1: everything from ; to end of line is skipped, producing no tokens, while line/col accounting for subsequent tokens stays exact (pin a case where a comment sits between tokens on one line and a case with full-line comments). Tests in tests/lexer-comments.test.mjs.",
+      "description": "Extend src/lexer.mjs with ; comments per DESIGN.md section 1: from ; to end of line produces no tokens while line:col for later tokens stays exact. Tests in tests/lexer-comments.test.mjs pin a comment between tokens on one line and full-line comments. Write MUTATION-ADEQUATE tests: assert exact values, exact token positions (line:col), exact error messages/positions, and boundary conditions — not just the happy path (a suite that still passes when an operator/constant/boundary is changed is not load-bearing and fails the gate). Put '// @attest WFT-LEXER mutates=src/lexer.mjs' directly above the load-bearing test; never weaken or delete an existing assertion; the whole tests/ suite must stay green.",
       "claims": [
-        "WFT-03"
+        "WFT-LEXER"
       ],
       "allowed_reads": [
         "docs/DESIGN.md",

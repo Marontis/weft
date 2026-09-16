@@ -171,7 +171,22 @@ NON-tail eval depth is capped at 10000 nested applies → WeftError
 
 ## 12. Conventions (binding tests to claims)
 
-Tests: `tests/*.test.mjs`, `node:test` + `assert/strict`. Bind a claim with
-`// @attest WFT-XX mutates=src/<file>.mjs` DIRECTLY above the load-bearing
-test. Never weaken or delete an existing assertion. The whole accumulated
-suite (`node --test tests/*.test.mjs`) must stay green in every task.
+Tests: `tests/*.test.mjs`, `node:test` + `assert/strict`.
+
+**One claim per source file.** Each source file has exactly one claim whose
+`mutates` is that file (e.g. `WFT-LEXER mutates=src/lexer.mjs`). Every task that
+adds tests exercising a file binds that same claim — so the file's whole test
+suite is judged together against its mutants. Do NOT invent a separate claim per
+sub-feature of one file; that makes each single test file get judged against the
+whole file's mutants and can never pass.
+
+Bind a claim with `// @attest <CLAIM> mutates=src/<file>.mjs` DIRECTLY above the
+load-bearing test. A file built across several tasks (or extended in a later
+epic, e.g. TCO extending the evaluator) keeps its one claim; the later task's
+test file carries the same marker.
+
+**Tests must be mutation-adequate**, not just passing: assert exact values,
+exact `line:col` positions, exact error messages, and boundary conditions, so a
+mutant that flips an operator, a constant, or a boundary makes some test fail.
+Never weaken or delete an existing assertion. The whole accumulated suite
+(`node --test tests/*.test.mjs`) must stay green in every task.

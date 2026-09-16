@@ -2,28 +2,20 @@
   "name": "weft-e3-evaluator",
   "claims": [
     {
-      "id": "WFT-07",
-      "description": "fn creates lexical closures: the defining environment is captured, calls get a child scope, def inside a function does not leak to the caller, and let shadows without mutating outer bindings"
+      "id": "WFT-ENV",
+      "description": "src/env.mjs: lexical environments per DESIGN.md section 6 — lookup walks the chain and raises 'unbound symbol: <name>' at the symbol's position, define binds in the current scope, newGlobalEnv seeds __out"
     },
     {
-      "id": "WFT-08",
-      "description": "if, and, or are lazy: the untaken if branch and short-circuited and/or operands are never evaluated, and and/or return the deciding value"
-    },
-    {
-      "id": "WFT-09",
-      "description": "evaluating an unbound symbol raises WeftError 'unbound symbol: <name>' carrying that symbol node's line/col"
-    },
-    {
-      "id": "WFT-10",
-      "description": "core builtins implement DESIGN.md section 8 exactly: variadic + - * / including unary forms, division by zero raises WeftError, chained number-only comparisons, deep structural = over nested lists"
+      "id": "WFT-EVAL",
+      "description": "src/evaluator.mjs: evalForm per DESIGN.md sections 5+7 — quote yields plain data, if/and/or lazy and return the deciding value, def/let/fn/do with lexical closures and correct arity errors, application left-to-right rejecting non-functions, section-5 truthiness"
     }
   ],
   "tasks": [
     {
-      "key": "eval-core",
-      "description": "Create src/env.mjs (lookup/define/newGlobalEnv skeleton per DESIGN.md section 6 — newGlobalEnv registers nothing yet but creates __out) and src/evaluator.mjs with evalForm() handling literals, symbol lookup (WFT-09 contract), and the quote special form per section 5 (quote of a symbol yields its name as a string; quote of a list yields an array of quoted items). Tests in tests/eval-core.test.mjs.",
+      "key": "env",
+      "description": "Create src/env.mjs per DESIGN.md section 6 (lookup/define/newGlobalEnv; newGlobalEnv creates __out, builtins registered later). Tests in tests/env.test.mjs cover chained lookup, shadowing, the unbound-symbol error (message AND position), and current-scope-only define. Write MUTATION-ADEQUATE tests: assert exact values, exact token positions (line:col), exact error messages/positions, and boundary conditions — not just the happy path (a suite that still passes when an operator/constant/boundary is changed is not load-bearing and fails the gate). Put '// @attest WFT-ENV mutates=src/env.mjs' directly above the load-bearing test; never weaken or delete an existing assertion; the whole tests/ suite must stay green.",
       "claims": [
-        "WFT-09"
+        "WFT-ENV"
       ],
       "allowed_reads": [
         "docs/DESIGN.md",
@@ -32,6 +24,23 @@
       ],
       "allowed_writes": [
         "src/env.mjs",
+        "tests/env.test.mjs"
+      ],
+      "verification_cmd": "node --test tests/*.test.mjs",
+      "max_retries": 3
+    },
+    {
+      "key": "eval-core",
+      "description": "Create src/evaluator.mjs (read src/env.mjs, src/parser.mjs) with evalForm for literals, symbol lookup (WFT-ENV error contract), and quote per DESIGN.md section 5 (symbol->name string, list->array of quoted items). Tests in tests/eval-core.test.mjs. Write MUTATION-ADEQUATE tests: assert exact values, exact token positions (line:col), exact error messages/positions, and boundary conditions — not just the happy path (a suite that still passes when an operator/constant/boundary is changed is not load-bearing and fails the gate). Put '// @attest WFT-EVAL mutates=src/evaluator.mjs' directly above the load-bearing test; never weaken or delete an existing assertion; the whole tests/ suite must stay green.",
+      "claims": [
+        "WFT-EVAL"
+      ],
+      "allowed_reads": [
+        "docs/DESIGN.md",
+        "src/**",
+        "tests/**"
+      ],
+      "allowed_writes": [
         "src/evaluator.mjs",
         "tests/eval-core.test.mjs"
       ],
@@ -40,9 +49,9 @@
     },
     {
       "key": "eval-scope",
-      "description": "Extend src/evaluator.mjs with def, let, do, fn and function application per DESIGN.md section 7: closures capture the defining env, calls bind params in a child env, arity errors use the exact message shape, let binds sequentially, do returns last (empty do is nil). Tests in tests/eval-scope.test.mjs.",
+      "description": "Extend src/evaluator.mjs with def, let, do, fn and application per DESIGN.md section 7: closures capture the defining env, params bind in a child env, exact arity-error shape, sequential let, do returns last (empty do nil). Tests in tests/eval-scope.test.mjs pin closure capture and shadowing. Write MUTATION-ADEQUATE tests: assert exact values, exact token positions (line:col), exact error messages/positions, and boundary conditions — not just the happy path (a suite that still passes when an operator/constant/boundary is changed is not load-bearing and fails the gate). Put '// @attest WFT-EVAL mutates=src/evaluator.mjs' directly above the load-bearing test; never weaken or delete an existing assertion; the whole tests/ suite must stay green.",
       "claims": [
-        "WFT-07"
+        "WFT-EVAL"
       ],
       "allowed_reads": [
         "docs/DESIGN.md",
@@ -58,9 +67,9 @@
     },
     {
       "key": "eval-branch",
-      "description": "Extend src/evaluator.mjs with if, and, or per DESIGN.md section 7, including the truthiness rule of section 5 (only false and nil are falsy). Laziness must be pinned with side-effect probes (e.g. a def in the untaken branch must not run). Tests in tests/eval-branch.test.mjs.",
+      "description": "Extend src/evaluator.mjs with if, and, or per DESIGN.md section 7 and the section-5 truthiness rule. PROBE laziness with side effects (a def in the untaken branch must not run) and assert and/or return the deciding value. Tests in tests/eval-branch.test.mjs. Write MUTATION-ADEQUATE tests: assert exact values, exact token positions (line:col), exact error messages/positions, and boundary conditions — not just the happy path (a suite that still passes when an operator/constant/boundary is changed is not load-bearing and fails the gate). Put '// @attest WFT-EVAL mutates=src/evaluator.mjs' directly above the load-bearing test; never weaken or delete an existing assertion; the whole tests/ suite must stay green.",
       "claims": [
-        "WFT-08"
+        "WFT-EVAL"
       ],
       "allowed_reads": [
         "docs/DESIGN.md",
@@ -70,26 +79,6 @@
       "allowed_writes": [
         "src/evaluator.mjs",
         "tests/eval-branch.test.mjs"
-      ],
-      "verification_cmd": "node --test tests/*.test.mjs",
-      "max_retries": 3
-    },
-    {
-      "key": "builtins-core",
-      "description": "Create src/builtins-core.mjs with + - * / = < > <= >= not per DESIGN.md section 8 (exact error messages; unary - and /; chained comparisons; deep structural =), register them in src/env.mjs newGlobalEnv, and create src/index.mjs exporting tokenize, parse, WeftError, newGlobalEnv, and evaluate(src, env?) per section 9 (run and format come in a later epic). Tests in tests/builtins-core.test.mjs must exercise the builtins THROUGH evaluate().",
-      "claims": [
-        "WFT-10"
-      ],
-      "allowed_reads": [
-        "docs/DESIGN.md",
-        "src/**",
-        "tests/**"
-      ],
-      "allowed_writes": [
-        "src/builtins-core.mjs",
-        "src/env.mjs",
-        "src/index.mjs",
-        "tests/builtins-core.test.mjs"
       ],
       "verification_cmd": "node --test tests/*.test.mjs",
       "max_retries": 3

@@ -4,7 +4,7 @@
   "tasks": [
     {
       "key": "playground",
-      "description": "Create index.html: a static, dependency-free playground that imports { run, format, WeftError } from ./src/index.mjs via <script type=\"module\">, with a textarea for source, Run and Format buttons, and an output area showing printed output, the final value (rendered via str through run), and WeftError positions on failure. No external network references of any kind. It must satisfy scripts/check_playground.mjs (read it).",
+      "description": "Create index.html: a static, dependency-free playground importing { run, format, WeftError } from ./src/index.mjs via <script type=\"module\">, with a source textarea, Run and Format buttons, and output showing printed output, the final value, and WeftError positions. No external network references. Must satisfy scripts/check_playground.mjs (read it).",
       "claims": [],
       "allowed_reads": [
         "docs/DESIGN.md",
@@ -19,7 +19,7 @@
     },
     {
       "key": "examples-golden",
-      "description": "Write three example weft programs in examples/ (fizzbuzz.weft using recursion and print; pipeline.weft chaining map/filter/reduce with print of the result; strings.weft exercising the string builtins) and tests/golden.test.mjs which run()s each file (read with node:fs) and asserts the COMPLETE expected output strings. Programs must follow docs/DESIGN.md exactly.",
+      "description": "Write examples/fizzbuzz.weft (recursion+print), examples/pipeline.weft (map/filter/reduce then print), examples/strings.weft (string builtins), and tests/golden.test.mjs which run()s each (node:fs) and asserts the COMPLETE expected output. Follow docs/DESIGN.md exactly.",
       "claims": [],
       "allowed_reads": [
         "docs/DESIGN.md",

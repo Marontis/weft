@@ -2,20 +2,16 @@
   "name": "weft-e5-format-run",
   "claims": [
     {
-      "id": "WFT-15",
-      "description": "format is idempotent and parse-stable: format(format(s)) === format(s), and parse(format(s)) deep-equals parse(s) ignoring line/col"
-    },
-    {
-      "id": "WFT-16",
-      "description": "run(src) returns { value, output }: value is the last form's value and output collects print lines in execution order; print itself returns nil"
+      "id": "WFT-FORMAT",
+      "description": "src/format.mjs: format(src) idempotent and parse-stable per DESIGN.md section 10 — 60-char one-line rule, 2-space continuation indent, one blank line between top-level forms, trailing newline, strings re-escaped, comments dropped"
     }
   ],
   "tasks": [
     {
       "key": "formatter",
-      "description": "Create src/format.mjs with format(src) per DESIGN.md section 10 (60-char one-line rule, 2-space continuation indent, exactly one blank line between top-level forms, trailing newline, strings re-escaped, comments dropped). Tests in tests/format.test.mjs must pin idempotence and parse-stability on nested inputs that exercise BOTH layout branches.",
+      "description": "Create src/format.mjs with format(src) per DESIGN.md section 10. Tests in tests/format.test.mjs pin idempotence and parse-stability on inputs exercising BOTH layout branches, plus string re-escaping and the blank-line/trailing-newline rules. Write MUTATION-ADEQUATE tests: assert exact values, exact token positions (line:col), exact error messages/positions, and boundary conditions — not just the happy path (a suite that still passes when an operator/constant/boundary is changed is not load-bearing and fails the gate). Put '// @attest WFT-FORMAT mutates=src/format.mjs' directly above the load-bearing test; never weaken or delete an existing assertion; the whole tests/ suite must stay green.",
       "claims": [
-        "WFT-15"
+        "WFT-FORMAT"
       ],
       "allowed_reads": [
         "docs/DESIGN.md",
@@ -31,10 +27,8 @@
     },
     {
       "key": "run-api",
-      "description": "Extend src/index.mjs per DESIGN.md section 9: add run(src) returning { value, output } (output joins the global env __out buffer) and re-export format from src/format.mjs. Tests in tests/run-api.test.mjs cover multi-print programs, print ordering, print returning nil, and run on a program whose value is a list.",
-      "claims": [
-        "WFT-16"
-      ],
+      "description": "Extend src/index.mjs per DESIGN.md section 9: add run(src) returning { value, output } (output joins __out) and re-export format. Tests in tests/run-api.test.mjs cover multi-print ordering, print returning nil, and run on a list-valued program. (Glue — no mutation claim; verified behaviorally by the suite.)",
+      "claims": [],
       "allowed_reads": [
         "docs/DESIGN.md",
         "src/**",

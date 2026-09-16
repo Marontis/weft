@@ -1,21 +1,12 @@
 {
   "name": "weft-e6-tco",
-  "claims": [
-    {
-      "id": "WFT-17",
-      "description": "calls in tail position (last form of do/let/fn bodies, both if branches, final and/or operand) execute in constant stack: self-recursion and mutual recursion to 100000 iterations both complete"
-    },
-    {
-      "id": "WFT-18",
-      "description": "non-tail recursion depth is capped at 10000 nested applies, raising WeftError 'stack depth exceeded' instead of a raw RangeError"
-    }
-  ],
+  "claims": [],
   "tasks": [
     {
       "key": "tco",
-      "description": "Rework the apply/eval loop in src/evaluator.mjs into a trampoline so that tail calls per DESIGN.md section 11 run in constant stack, WITHOUT changing any observable non-tail semantics (the whole existing suite must stay green). Tests in tests/tco.test.mjs: a countdown to 100000 via self-recursion and an even?/odd? mutual recursion to 100000.",
+      "description": "Rework the apply/eval loop in src/evaluator.mjs into a trampoline so tail calls per DESIGN.md section 11 run in constant stack, WITHOUT changing observable non-tail semantics (whole suite stays green). tests/tco.test.mjs: self-recursive countdown to 100000 and even?/odd? mutual recursion to 100000. Write MUTATION-ADEQUATE tests: assert exact values, exact token positions (line:col), exact error messages/positions, and boundary conditions — not just the happy path (a suite that still passes when an operator/constant/boundary is changed is not load-bearing and fails the gate). Put '// @attest WFT-EVAL mutates=src/evaluator.mjs' directly above the load-bearing test; never weaken or delete an existing assertion; the whole tests/ suite must stay green.",
       "claims": [
-        "WFT-17"
+        "WFT-EVAL"
       ],
       "allowed_reads": [
         "docs/DESIGN.md",
@@ -31,9 +22,9 @@
     },
     {
       "key": "depth-cap",
-      "description": "Add the non-tail depth cap per DESIGN.md section 11 to src/evaluator.mjs: 10000 nested NON-tail applies raise WeftError 'stack depth exceeded'; tail-recursive loops from the previous task must remain unaffected. Tests in tests/depth-cap.test.mjs pin both sides (a non-tail factorial past the cap fails with the exact message; the 100000 tail loop still passes).",
+      "description": "Add the non-tail depth cap per DESIGN.md section 11 to src/evaluator.mjs: 10000 nested NON-tail applies raise WeftError 'stack depth exceeded'; tail loops stay unaffected. tests/depth-cap.test.mjs pin both sides. Write MUTATION-ADEQUATE tests: assert exact values, exact token positions (line:col), exact error messages/positions, and boundary conditions — not just the happy path (a suite that still passes when an operator/constant/boundary is changed is not load-bearing and fails the gate). Put '// @attest WFT-EVAL mutates=src/evaluator.mjs' directly above the load-bearing test; never weaken or delete an existing assertion; the whole tests/ suite must stay green.",
       "claims": [
-        "WFT-18"
+        "WFT-EVAL"
       ],
       "allowed_reads": [
         "docs/DESIGN.md",
