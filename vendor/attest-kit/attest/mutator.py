@@ -702,6 +702,15 @@ def _verify_ts(root: Path, target: str, derived: dict,
         cmd.append(str(tmp_conf))
     # CLI flags override the config file regardless of position.
     cmd += ["--mutate", target, "--reporters", "json", "--concurrency", str(conc)]
+    # Incremental (opt-in): stryker caches per-mutant verdicts keyed on source +
+    # test hashes and, on re-run, only re-tests mutants whose covering tests
+    # changed. That is exactly the CEGIS shape — source fixed, tests grow each
+    # round — so a strengthen round after the first re-tests only the survivors
+    # under the new tests instead of the whole file. Opt-in via env because the
+    # AUTHORITATIVE gate (CI) must do a full cold run for its ruling; only the
+    # fast in-fleet strengthening loop sets it.
+    if os.environ.get("ATTEST_STRYKER_INCREMENTAL", "").lower() in ("1", "true", "yes"):
+        cmd += ["--incremental"]
 
     try:
         r = _run(cmd, root)
