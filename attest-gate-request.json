@@ -1,19 +1,12 @@
 {
   "schemaVersion": 1,
-  "epic": "weft-e4-stdlib",
+  "epic": "weft-e5-format-run",
   "claims": [
-    "WFT-CORE",
-    "WFT-LISTS",
-    "WFT-MATH",
-    "WFT-RENDER",
-    "WFT-STRINGS"
+    "WFT-FORMAT"
   ],
   "tasks": [
-    "ed80b8c7b3ed4cd4a2ff84463d54d45f",
-    "f146d51993b6472080396eeaa60bfa62",
-    "b9891329a1424f1dbf218affa2006c91",
-    "a5d51d458a6a48859dd15bdf387797b0",
-    "67aade2d484749bf81b8e35af0d86bcc"
+    "46258fd8422043578f822b209e09b755",
+    "50b53cb168f04578b35b0b70bd754585"
   ],
-  "requestedAt": "2026-09-17T01:53:44Z"
+  "requestedAt": "2026-09-17T01:57:42Z"
 }
