@@ -1,12 +1,10 @@
 {
   "schemaVersion": 1,
-  "epic": "weft-e5-format-run",
-  "claims": [
-    "WFT-FORMAT"
-  ],
+  "epic": "weft-e6-tco",
+  "claims": [],
   "tasks": [
-    "46258fd8422043578f822b209e09b755",
-    "50b53cb168f04578b35b0b70bd754585"
+    "5248a25ad61d40b992530d1d574d8e4d",
+    "2014a1748a0f49fc9b7d8700bdedc6fe"
   ],
-  "requestedAt": "2026-09-17T01:57:42Z"
+  "requestedAt": "2026-09-17T02:02:24Z"
 }
