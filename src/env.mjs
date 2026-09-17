@@ -1,4 +1,8 @@
 import { WeftError } from './errors.mjs';
+import { registerCoreBuiltins } from './builtins-core.mjs';
+import { registerListBuiltins } from './builtins-lists.mjs';
+import { registerStringBuiltins } from './builtins-strings.mjs';
+import { registerMathBuiltins } from './builtins-math.mjs';
 
 export function lookup(env, name, node = null) {
   let curr = env;
@@ -27,5 +31,9 @@ export function newGlobalEnv() {
     parent: null,
     __out: []
   };
+  registerCoreBuiltins(env);
+  registerListBuiltins(env);
+  registerStringBuiltins(env);
+  registerMathBuiltins(env);
   return env;
 }
