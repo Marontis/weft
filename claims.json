@@ -20,6 +20,31 @@
       "id": "WFT-EVAL",
       "description": "src/evaluator.mjs: evalForm per DESIGN.md sections 5+7 — quote yields plain data, if/and/or lazy and return the deciding value, def/let/fn/do with lexical closures and correct arity errors, application left-to-right rejecting non-functions, section-5 truthiness",
       "status": "active"
+    },
+    {
+      "id": "WFT-RENDER",
+      "description": "src/render.mjs: render(value) canonical per DESIGN.md section 8 — integral floats without a decimal point, strings as-is, nil, booleans, nested lists parenthesized, functions <fn>",
+      "status": "active"
+    },
+    {
+      "id": "WFT-CORE",
+      "description": "src/builtins-core.mjs: + - * / (variadic incl. unary, division-by-zero error), = deep structural, < > <= >= number-only chained, not, str, print per DESIGN.md section 8",
+      "status": "active"
+    },
+    {
+      "id": "WFT-LISTS",
+      "description": "src/builtins-lists.mjs: list/head/tail/cons/len/nth/concat/reverse (errors, non-mutating) + map/filter/reduce (left fold, required init) per DESIGN.md section 8",
+      "status": "active"
+    },
+    {
+      "id": "WFT-STRINGS",
+      "description": "src/builtins-strings.mjs: str-len/str-slice(clamped)/str-split/str-join/str-upper/str-lower/str-contains? with 'expected string' error per DESIGN.md section 8",
+      "status": "active"
+    },
+    {
+      "id": "WFT-MATH",
+      "description": "src/builtins-math.mjs: mod (JS % sign)/floor/ceil/abs/min/max per DESIGN.md section 8",
+      "status": "active"
     }
   ]
 }
