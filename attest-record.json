@@ -1,0 +1,229 @@
+{
+  "schemaVersion": 1,
+  "recordedAt": "2026-09-17T02:41:10+00:00",
+  "durationSeconds": 1389.621,
+  "summary": {
+    "total": 12,
+    "pending": 0,
+    "active": 12,
+    "verified": 0,
+    "vacuous": 11,
+    "behavioral": 0,
+    "broken": 0,
+    "unsupported": 1
+  },
+  "mutation": {
+    "WFT-LEXER": {
+      "status": "vacuous",
+      "scope": "file",
+      "lastRun": "2026-09-17T02:18:48+00:00",
+      "mutants": 376,
+      "survivors": [
+        "src/lexer.mjs:139:9 ConditionalExpression (Survived)",
+        "src/lexer.mjs:139:9 LogicalOperator (Survived)",
+        "src/lexer.mjs:139:9 ConditionalExpression (Survived)",
+        "src/lexer.mjs:139:23 ConditionalExpression (Survived)",
+        "src/lexer.mjs:139:23 EqualityOperator (Survived)",
+        "src/lexer.mjs:139:23 ArithmeticOperator (Survived)",
+        "src/lexer.mjs:141:29 ConditionalExpression (Survived)",
+        "src/lexer.mjs:192:9 ConditionalExpression (Survived)",
+        "src/lexer.mjs:192:9 EqualityOperator (Survived)",
+        "src/lexer.mjs:200:25 StringLiteral (Survived)"
+      ],
+      "durationSeconds": 47.732
+    },
+    "WFT-PARSER": {
+      "status": "vacuous",
+      "scope": "file",
+      "lastRun": "2026-09-17T02:19:07+00:00",
+      "mutants": 88,
+      "survivors": [
+        "src/parser.mjs:59:13 ConditionalExpression (Survived)",
+        "src/parser.mjs:59:20 BlockStatement (Survived)",
+        "src/parser.mjs:66:9 ConditionalExpression (Survived)",
+        "src/parser.mjs:73:5 UpdateOperator (Survived)",
+        "src/parser.mjs:69:7 UpdateOperator (Survived)",
+        "src/parser.mjs:79:9 ConditionalExpression (Survived)"
+      ],
+      "durationSeconds": 18.469
+    },
+    "WFT-ENV": {
+      "status": "vacuous",
+      "scope": "file",
+      "lastRun": "2026-09-17T02:19:18+00:00",
+      "mutants": 28,
+      "survivors": [
+        "src/env.mjs:15:24 ConditionalExpression (Survived)",
+        "src/env.mjs:16:23 ConditionalExpression (Survived)",
+        "src/env.mjs:21:7 ConditionalExpression (Survived)",
+        "src/env.mjs:21:18 BlockStatement (Survived)"
+      ],
+      "durationSeconds": 11.225
+    },
+    "WFT-EVAL": {
+      "status": "vacuous",
+      "scope": "file",
+      "lastRun": "2026-09-17T02:39:39+00:00",
+      "mutants": 995,
+      "survivors": [
+        "src/evaluator.mjs:225:21 ObjectLiteral (Survived)",
+        "src/evaluator.mjs:228:20 ConditionalExpression (Survived)"
+      ],
+      "durationSeconds": 1220.936
+    },
+    "WFT-RENDER": {
+      "status": "vacuous",
+      "scope": "file",
+      "lastRun": "2026-09-17T02:39:43+00:00",
+      "mutants": 41,
+      "survivors": [
+        "src/render.mjs:2:24 StringLiteral (Survived)",
+        "src/render.mjs:5:24 StringLiteral (Survived)",
+        "src/render.mjs:5:34 BlockStatement (Survived)",
+        "src/render.mjs:2:7 ConditionalExpression (Survived)",
+        "src/render.mjs:2:34 BlockStatement (Survived)",
+        "src/render.mjs:5:7 ConditionalExpression (Survived)",
+        "src/render.mjs:11:24 StringLiteral (Survived)",
+        "src/render.mjs:11:35 BlockStatement (Survived)",
+        "src/render.mjs:11:7 ConditionalExpression (Survived)",
+        "src/render.mjs:17:36 ConditionalExpression (Survived)"
+      ],
+      "durationSeconds": 4.329
+    },
+    "WFT-CORE": {
+      "status": "vacuous",
+      "scope": "file",
+      "lastRun": "2026-09-17T02:40:10+00:00",
+      "mutants": 266,
+      "survivors": [
+        "src/builtins-core.mjs:5:16 ConditionalExpression (Survived)",
+        "src/builtins-core.mjs:5:24 ConditionalExpression (Survived)",
+        "src/builtins-core.mjs:6:15 ConditionalExpression (Survived)",
+        "src/builtins-core.mjs:6:23 ConditionalExpression (Survived)",
+        "src/builtins-core.mjs:6:15 LogicalOperator (Survived)",
+        "src/builtins-core.mjs:5:16 LogicalOperator (Survived)",
+        "src/builtins-core.mjs:74:21 EqualityOperator (Survived)",
+        "src/builtins-core.mjs:179:7 ConditionalExpression (Survived)",
+        "src/builtins-core.mjs:179:7 LogicalOperator (Survived)",
+        "src/builtins-core.mjs:202:9 ConditionalExpression (Survived)",
+        "src/builtins-core.mjs:202:20 BlockStatement (Survived)"
+      ],
+      "durationSeconds": 26.723
+    },
+    "WFT-LISTS": {
+      "status": "vacuous",
+      "scope": "file",
+      "lastRun": "2026-09-17T02:40:33+00:00",
+      "mutants": 235,
+      "survivors": [
+        "src/builtins-lists.mjs:6:15 ConditionalExpression (Survived)",
+        "src/builtins-lists.mjs:5:24 ConditionalExpression (Survived)",
+        "src/builtins-lists.mjs:6:15 LogicalOperator (Survived)",
+        "src/builtins-lists.mjs:5:16 ConditionalExpression (Survived)",
+        "src/builtins-lists.mjs:6:23 ConditionalExpression (Survived)",
+        "src/builtins-lists.mjs:5:16 LogicalOperator (Survived)",
+        "src/builtins-lists.mjs:18:68 ConditionalExpression (Survived)",
+        "src/builtins-lists.mjs:18:83 StringLiteral (Survived)",
+        "src/builtins-lists.mjs:30:7 LogicalOperator (Survived)",
+        "src/builtins-lists.mjs:30:7 ConditionalExpression (Survived)",
+        "src/builtins-lists.mjs:30:18 ConditionalExpression (Survived)",
+        "src/builtins-lists.mjs:30:74 EqualityOperator (Survived)",
+        "src/builtins-lists.mjs:30:104 BlockStatement (Survived)",
+        "src/builtins-lists.mjs:30:91 StringLiteral (Survived)",
+        "src/builtins-lists.mjs:30:74 ConditionalExpression (Survived)",
+        "src/builtins-lists.mjs:31:25 StringLiteral (Survived)",
+        "src/builtins-lists.mjs:38:21 EqualityOperator (Survived)",
+        "src/builtins-lists.mjs:46:14 ConditionalExpression (Survived)",
+        "src/builtins-lists.mjs:48:14 ConditionalExpression (Survived)",
+        "src/builtins-lists.mjs:48:14 EqualityOperator (Survived)",
+        "src/builtins-lists.mjs:48:14 ConditionalExpression (Survived)",
+        "src/builtins-lists.mjs:48:31 StringLiteral (Survived)",
+        "src/builtins-lists.mjs:48:43 BlockStatement (Survived)",
+        "src/builtins-lists.mjs:201:20 BlockStatement (Survived)",
+        "src/builtins-lists.mjs:201:9 ConditionalExpression (Survived)"
+      ],
+      "durationSeconds": 22.662
+    },
+    "WFT-STRINGS": {
+      "status": "vacuous",
+      "scope": "file",
+      "lastRun": "2026-09-17T02:40:40+00:00",
+      "mutants": 112,
+      "survivors": [
+        "src/builtins-strings.mjs:4:16 LogicalOperator (Survived)",
+        "src/builtins-strings.mjs:4:24 ConditionalExpression (Survived)",
+        "src/builtins-strings.mjs:5:15 ConditionalExpression (Survived)",
+        "src/builtins-strings.mjs:4:16 ConditionalExpression (Survived)",
+        "src/builtins-strings.mjs:5:23 ConditionalExpression (Survived)",
+        "src/builtins-strings.mjs:5:15 LogicalOperator (Survived)",
+        "src/builtins-strings.mjs:24:7 ConditionalExpression (Survived)",
+        "src/builtins-strings.mjs:53:7 EqualityOperator (Survived)",
+        "src/builtins-strings.mjs:54:7 EqualityOperator (Survived)",
+        "src/builtins-strings.mjs:54:7 ConditionalExpression (Survived)",
+        "src/builtins-strings.mjs:55:7 EqualityOperator (Survived)",
+        "src/builtins-strings.mjs:56:7 EqualityOperator (Survived)",
+        "src/builtins-strings.mjs:56:7 ConditionalExpression (Survived)",
+        "src/builtins-strings.mjs:125:9 ConditionalExpression (Survived)",
+        "src/builtins-strings.mjs:125:20 BlockStatement (Survived)"
+      ],
+      "durationSeconds": 7.719
+    },
+    "WFT-MATH": {
+      "status": "vacuous",
+      "scope": "file",
+      "lastRun": "2026-09-17T02:40:56+00:00",
+      "mutants": 108,
+      "survivors": [
+        "src/builtins-math.mjs:4:16 LogicalOperator (Survived)",
+        "src/builtins-math.mjs:4:24 ConditionalExpression (Survived)",
+        "src/builtins-math.mjs:4:16 ConditionalExpression (Survived)",
+        "src/builtins-math.mjs:5:23 ConditionalExpression (Survived)",
+        "src/builtins-math.mjs:5:15 ConditionalExpression (Survived)",
+        "src/builtins-math.mjs:5:15 LogicalOperator (Survived)",
+        "src/builtins-math.mjs:69:19 EqualityOperator (Survived)",
+        "src/builtins-math.mjs:70:9 EqualityOperator (Survived)",
+        "src/builtins-math.mjs:86:19 EqualityOperator (Survived)",
+        "src/builtins-math.mjs:87:9 EqualityOperator (Survived)",
+        "src/builtins-math.mjs:105:9 ConditionalExpression (Survived)",
+        "src/builtins-math.mjs:105:20 BlockStatement (Survived)"
+      ],
+      "durationSeconds": 15.388
+    },
+    "WFT-FORMAT": {
+      "status": "vacuous",
+      "scope": "file",
+      "lastRun": "2026-09-17T02:41:07+00:00",
+      "mutants": 80,
+      "survivors": [
+        "src/format.mjs:27:7 ConditionalExpression (Survived)",
+        "src/format.mjs:28:9 ConditionalExpression (Survived)",
+        "src/format.mjs:28:41 StringLiteral (Survived)",
+        "src/format.mjs:30:9 ConditionalExpression (Survived)",
+        "src/format.mjs:35:37 StringLiteral (Survived)",
+        "src/format.mjs:30:9 EqualityOperator (Survived)",
+        "src/format.mjs:36:29 StringLiteral (Survived)",
+        "src/format.mjs:36:44 StringLiteral (Survived)",
+        "src/format.mjs:38:25 StringLiteral (Survived)",
+        "src/format.mjs:38:42 StringLiteral (Survived)",
+        "src/format.mjs:40:10 StringLiteral (Survived)",
+        "src/format.mjs:45:7 ConditionalExpression (Survived)"
+      ],
+      "durationSeconds": 11.233
+    },
+    "WFT-INDEX": {
+      "status": "vacuous",
+      "scope": "file",
+      "lastRun": "2026-09-17T02:41:10+00:00",
+      "mutants": 6,
+      "survivors": [
+        "src/index.mjs:23:51 StringLiteral (Survived)"
+      ],
+      "durationSeconds": 3.205
+    },
+    "WFT-GOLDEN": {
+      "status": "unsupported",
+      "detail": "no mutation engine for examples/fizzbuzz.weft: Python (mutmut), Go (gremlins), and TS/JS (stryker) are supported.",
+      "durationSeconds": 0.0
+    }
+  }
+}
