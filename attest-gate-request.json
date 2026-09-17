@@ -1,5 +1,13 @@
 {
-  "claims": ["WFT-LEXER"],
-  "epic": "weft-e1-lexer",
-  "requestedBy": "operator"
+  "schemaVersion": 1,
+  "epic": "weft-e2-parser",
+  "claims": [
+    "WFT-PARSER"
+  ],
+  "tasks": [
+    "8aee6520ba0d4b34a5c581b57c704583",
+    "d980498b239b4daa840f0fb8a3f6a2f6",
+    "6e62e81edbe749b1a757e967f399ac92"
+  ],
+  "requestedAt": "2026-09-17T01:14:47Z"
 }

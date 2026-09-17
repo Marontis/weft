@@ -5,6 +5,11 @@
       "id": "WFT-LEXER",
       "description": "src/lexer.mjs: tokenize(src) per DESIGN.md sections 1-2 — correct token types/values, 1-based line:col at each token's first char, string escapes decoded, unterminated-string/unknown-escape errors at the right positions, ; comments skipped without disturbing positions",
       "status": "active"
+    },
+    {
+      "id": "WFT-PARSER",
+      "description": "src/parser.mjs: parse(src) per DESIGN.md section 3 — exact AST node shapes with positions, 'x -> (quote x) at the quote position, unclosed ( and unexpected ) errors at the right positions/prefixes",
+      "status": "active"
     }
   ]
 }
