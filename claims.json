@@ -3,27 +3,27 @@
   "claims": [
     {
       "id": "WFT-LEXER",
-      "description": "src/lexer.mjs: tokenize(src) per DESIGN.md sections 1-2 — correct token types/values, 1-based line:col at each token's first char, string escapes decoded, unterminated-string/unknown-escape errors at the right positions, ; comments skipped without disturbing positions",
+      "description": "src/lexer.mjs: tokenize(src) per DESIGN.md sections 1-2 \u2014 correct token types/values, 1-based line:col at each token's first char, string escapes decoded, unterminated-string/unknown-escape errors at the right positions, ; comments skipped without disturbing positions",
       "status": "active"
     },
     {
       "id": "WFT-PARSER",
-      "description": "src/parser.mjs: parse(src) per DESIGN.md section 3 — exact AST node shapes with positions, 'x -> (quote x) at the quote position, unclosed ( and unexpected ) errors at the right positions/prefixes",
+      "description": "src/parser.mjs: parse(src) per DESIGN.md section 3 \u2014 exact AST node shapes with positions, 'x -> (quote x) at the quote position, unclosed ( and unexpected ) errors at the right positions/prefixes",
       "status": "active"
     },
     {
       "id": "WFT-ENV",
-      "description": "src/env.mjs: lexical environments per DESIGN.md section 6 — lookup walks the chain and raises 'unbound symbol: <name>' at the symbol's position, define binds in the current scope, newGlobalEnv seeds __out",
+      "description": "src/env.mjs: lexical environments per DESIGN.md section 6 \u2014 lookup walks the chain and raises 'unbound symbol: <name>' at the symbol's position, define binds in the current scope, newGlobalEnv seeds __out",
       "status": "active"
     },
     {
       "id": "WFT-EVAL",
-      "description": "src/evaluator.mjs: evalForm per DESIGN.md sections 5+7 — quote yields plain data, if/and/or lazy and return the deciding value, def/let/fn/do with lexical closures and correct arity errors, application left-to-right rejecting non-functions, section-5 truthiness",
+      "description": "src/evaluator.mjs: evalForm per DESIGN.md sections 5+7 \u2014 quote yields plain data, if/and/or lazy and return the deciding value, def/let/fn/do with lexical closures and correct arity errors, application left-to-right rejecting non-functions, section-5 truthiness",
       "status": "active"
     },
     {
       "id": "WFT-RENDER",
-      "description": "src/render.mjs: render(value) canonical per DESIGN.md section 8 — integral floats without a decimal point, strings as-is, nil, booleans, nested lists parenthesized, functions <fn>",
+      "description": "src/render.mjs: render(value) canonical per DESIGN.md section 8 \u2014 integral floats without a decimal point, strings as-is, nil, booleans, nested lists parenthesized, functions <fn>",
       "status": "active"
     },
     {
@@ -48,7 +48,17 @@
     },
     {
       "id": "WFT-FORMAT",
-      "description": "src/format.mjs: format(src) idempotent and parse-stable per DESIGN.md section 10 — 60-char one-line rule, 2-space continuation indent, one blank line between top-level forms, trailing newline, strings re-escaped, comments dropped",
+      "description": "src/format.mjs: format(src) idempotent and parse-stable per DESIGN.md section 10 \u2014 60-char one-line rule, 2-space continuation indent, one blank line between top-level forms, trailing newline, strings re-escaped, comments dropped",
+      "status": "active"
+    },
+    {
+      "id": "WFT-INDEX",
+      "description": "src/index.mjs: the public run(src) API per DESIGN.md section 9 \u2014 evaluate all top-level forms, return {value, output}, surface WeftErrors with positions",
+      "status": "active"
+    },
+    {
+      "id": "WFT-GOLDEN",
+      "description": "examples/*.weft golden programs \u2014 fizzbuzz, pipeline and strings run end-to-end and produce their exact expected output (whole-language integration claims; .weft targets are not mutation-scored)",
       "status": "active"
     }
   ]
