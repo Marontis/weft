@@ -1,0 +1,15 @@
+(def s "Hello, Weft World!")
+
+(print (str-len s))
+
+(print (str-upper s))
+
+(print (str-lower s))
+
+(print (str-contains? s "Weft"))
+
+(print (str-slice s 7 11))
+
+(print (str-split s " "))
+
+(print (str-join (list "a" "b" "c") "-"))
