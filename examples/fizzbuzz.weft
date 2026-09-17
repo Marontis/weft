@@ -1,0 +1,22 @@
+(def fizzbuzz
+  (fn
+    (n max)
+    (if
+      (> n max)
+      nil
+      (do
+        (print (cond n))
+        (fizzbuzz (+ n 1) max)))))
+
+(def cond
+  (fn
+    (n)
+    (if
+      (= (mod n 15) 0)
+      "FizzBuzz"
+      (if
+        (= (mod n 3) 0)
+        "Fizz"
+        (if (= (mod n 5) 0) "Buzz" (str n))))))
+
+(fizzbuzz 1 15)

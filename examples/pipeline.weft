@@ -1,0 +1,16 @@
+(def xs (list 1 2 3 4 5 6))
+
+(def evens
+  (filter (fn (x) (= (mod x 2) 0)) xs))
+
+(def doubled
+  (map (fn (x) (* x 2)) evens))
+
+(def sum
+  (reduce (fn (acc x) (+ acc x)) 0 doubled))
+
+(print (str "evens: " evens))
+
+(print (str "doubled: " doubled))
+
+(print (str "sum: " sum))

@@ -1,10 +1,10 @@
 {
   "schemaVersion": 1,
-  "epic": "weft-e6-tco",
+  "epic": "weft-e7-playground",
   "claims": [],
   "tasks": [
-    "5248a25ad61d40b992530d1d574d8e4d",
-    "2014a1748a0f49fc9b7d8700bdedc6fe"
+    "1508a8e977c84378bfb9d1818032e642",
+    "f30007c6ba1440f7ad3949153a4be825"
   ],
-  "requestedAt": "2026-09-17T02:02:24Z"
+  "requestedAt": "2026-09-17T02:08:56Z"
 }
