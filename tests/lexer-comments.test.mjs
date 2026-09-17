@@ -116,4 +116,72 @@ test('lexer comments: between tokens on one line, full-line comments, exact line
       err.line === 2 &&
       err.col === 8;
   });
+
+  // 15. Semicolon delimiter after negative and decimal numbers (line 165 nextChar === ';')
+  const negNumSemi = tokenize('-42;comment\nx');
+  assert.deepEqual(negNumSemi, [
+    { type: 'num', value: -42, line: 1, col: 1 },
+    { type: 'sym', value: 'x', line: 2, col: 1 }
+  ]);
+  const decNumSemi = tokenize('3.14;comment\nx');
+  assert.deepEqual(decNumSemi, [
+    { type: 'num', value: 3.14, line: 1, col: 1 },
+    { type: 'sym', value: 'x', line: 2, col: 1 }
+  ]);
+  const zeroNumSemi = tokenize('0;comment\nx');
+  assert.deepEqual(zeroNumSemi, [
+    { type: 'num', value: 0, line: 1, col: 1 },
+    { type: 'sym', value: 'x', line: 2, col: 1 }
+  ]);
+
+  // 16. Semicolon delimiter after symbols and operators (line 185 c === ';')
+  const symSemi = tokenize('my-var?;comment\nx');
+  assert.deepEqual(symSemi, [
+    { type: 'sym', value: 'my-var?', line: 1, col: 1 },
+    { type: 'sym', value: 'x', line: 2, col: 1 }
+  ]);
+  const plusSemi = tokenize('+;comment\nx');
+  assert.deepEqual(plusSemi, [
+    { type: 'sym', value: '+', line: 1, col: 1 },
+    { type: 'sym', value: 'x', line: 2, col: 1 }
+  ]);
+  const minusSemi = tokenize('-;comment\nx');
+  assert.deepEqual(minusSemi, [
+    { type: 'sym', value: '-', line: 1, col: 1 },
+    { type: 'sym', value: 'x', line: 2, col: 1 }
+  ]);
+
+  // 17. Semicolon delimiter at EOF without newline
+  assert.deepEqual(tokenize(';'), []);
+  assert.deepEqual(tokenize(';;'), []);
+  assert.deepEqual(tokenize(';   '), []);
+  assert.deepEqual(tokenize('-99;trailing'), [
+    { type: 'num', value: -99, line: 1, col: 1 }
+  ]);
+  assert.deepEqual(tokenize('alpha;trailing'), [
+    { type: 'sym', value: 'alpha', line: 1, col: 1 }
+  ]);
+  assert.deepEqual(tokenize('( ;trailing'), [
+    { type: 'lparen', value: '(', line: 1, col: 1 }
+  ]);
+  assert.deepEqual(tokenize(') ;trailing'), [
+    { type: 'rparen', value: ')', line: 1, col: 1 }
+  ]);
+
+  // 18. Line 51 stack fallback mutant (src/lexer.mjs:51:61 StringLiteral)
+  const origTest = RegExp.prototype.test;
+  let testedArgComment;
+  RegExp.prototype.test = function (str) {
+    testedArgComment = str;
+    return origTest.call(this, str);
+  };
+  const origPrepare = Error.prepareStackTrace;
+  try {
+    Error.prepareStackTrace = () => '';
+    tokenize('; stack test');
+    assert.equal(testedArgComment, '');
+  } finally {
+    RegExp.prototype.test = origTest;
+    Error.prepareStackTrace = origPrepare;
+  }
 });
