@@ -1,5 +1,6 @@
 import { WeftError } from './errors.mjs';
 import { registerCoreBuiltins } from './builtins-core.mjs';
+import { registerListBuiltins } from './builtins-lists.mjs';
 
 export function lookup(env, name, node = null) {
   let curr = env;
@@ -29,5 +30,6 @@ export function newGlobalEnv() {
     __out: []
   };
   registerCoreBuiltins(env);
+  registerListBuiltins(env);
   return env;
 }
