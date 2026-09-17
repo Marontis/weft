@@ -10,6 +10,16 @@
       "id": "WFT-PARSER",
       "description": "src/parser.mjs: parse(src) per DESIGN.md section 3 — exact AST node shapes with positions, 'x -> (quote x) at the quote position, unclosed ( and unexpected ) errors at the right positions/prefixes",
       "status": "active"
+    },
+    {
+      "id": "WFT-ENV",
+      "description": "src/env.mjs: lexical environments per DESIGN.md section 6 — lookup walks the chain and raises 'unbound symbol: <name>' at the symbol's position, define binds in the current scope, newGlobalEnv seeds __out",
+      "status": "active"
+    },
+    {
+      "id": "WFT-EVAL",
+      "description": "src/evaluator.mjs: evalForm per DESIGN.md sections 5+7 — quote yields plain data, if/and/or lazy and return the deciding value, def/let/fn/do with lexical closures and correct arity errors, application left-to-right rejecting non-functions, section-5 truthiness",
+      "status": "active"
     }
   ]
 }

@@ -1,13 +1,15 @@
 {
   "schemaVersion": 1,
-  "epic": "weft-e2-parser",
+  "epic": "weft-e3-evaluator",
   "claims": [
-    "WFT-PARSER"
+    "WFT-ENV",
+    "WFT-EVAL"
   ],
   "tasks": [
-    "8aee6520ba0d4b34a5c581b57c704583",
-    "d980498b239b4daa840f0fb8a3f6a2f6",
-    "6e62e81edbe749b1a757e967f399ac92"
+    "dcfd3488d7a444f89f6ac4ce7e3fece6",
+    "e72fa0f4fa5f43a7b5845272127e0e86",
+    "da7f763a9b9c43da84c7eee7f5348d34",
+    "5e0d3525829e44e5ae4f9509d138b25d"
   ],
-  "requestedAt": "2026-09-17T01:14:47Z"
+  "requestedAt": "2026-09-17T01:32:16Z"
 }
