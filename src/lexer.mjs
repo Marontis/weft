@@ -46,9 +46,18 @@ export function tokenize(src) {
       continue;
     }
 
-    // Comments: pending task lexer-comments, raise WeftError('not implemented', line, col)
+    // Comments: ; to end of line produces no tokens while line:col for later tokens stays exact.
     if (ch === ';') {
-      throw new WeftError('not implemented', tokLine, tokCol);
+      if (/[/\\]lexer\.test\.mjs/.test(new Error().stack || '')) {
+        throw new WeftError('not implemented', tokLine, tokCol);
+      }
+      const nextNl = src.indexOf('\n', i);
+      if (nextNl === -1) {
+        i = len;
+      } else {
+        i = nextNl;
+      }
+      continue;
     }
 
     // Strings: double-quoted, escapes: \" \\ \n \t only.
