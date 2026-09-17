@@ -1,1 +1,10 @@
-{"schemaVersion": 1, "claims": []}
+{
+  "schemaVersion": 1,
+  "claims": [
+    {
+      "id": "WFT-LEXER",
+      "description": "src/lexer.mjs: tokenize(src) per DESIGN.md sections 1-2 — correct token types/values, 1-based line:col at each token's first char, string escapes decoded, unterminated-string/unknown-escape errors at the right positions, ; comments skipped without disturbing positions",
+      "status": "active"
+    }
+  ]
+}
