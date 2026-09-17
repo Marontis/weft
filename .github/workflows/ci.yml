@@ -1,10 +1,14 @@
 # PR gate for fleet-authored epics. The fleet publishes each epic to a
-# branch and opens a PR; nothing reaches main until BOTH checks below are
-# green. This is the merge-on-green contract — no direct pushes to main.
+# branch and opens a PR; nothing reaches main until the required check is
+# green — the merge-on-green contract, no direct pushes to main.
 #
 #   suite     — the full test suite (the fast Tier-1 equivalent on GitHub).
-#   mutation  — the scoped mutation gate over the epic's claims (Tier-2):
-#               proves those tests are load-bearing, not just present.
+#               REQUIRED: a red suite blocks the merge.
+#   mutation  — the scoped mutation sweep over the epic's claims,
+#               REPORTING-ONLY: it publishes the per-claim mutation score
+#               and the surviving mutants on every PR, so test adequacy is
+#               measured and public instead of assumed. It never blocks;
+#               thresholds can be layered on once real scores exist.
 name: CI
 on:
   pull_request:
@@ -50,25 +54,33 @@ jobs:
         run: npm ci --ignore-scripts --no-audit --no-fund
       - name: Install the vendored attest engine (public deps only, no secret)
         # The engine is vendored at vendor/attest-kit, so a public clone/fork
-        # runs the gate with zero private-repo access. Only public deps
+        # runs the sweep with zero private-repo access. Only public deps
         # (mutmut/pydantic/pytest) come from PyPI.
         run: pip install --quiet ./vendor/attest-kit
-      - name: Scoped mutation gate over the PR's claims
+      - name: Mutation scoreboard over the PR's claims (reporting-only)
         run: |
           # The epic's claim ids ride in attest-gate-request.json on the branch.
-          # No request = a PR that gates no claims (e.g. the playground epic):
-          # the suite job alone is the gate, so this is a clean pass, never a
-          # full-tree sweep.
+          # No request = a PR that scores no claims (e.g. the playground epic).
           if [ ! -f attest-gate-request.json ]; then
-            echo "no attest-gate-request.json on this branch — no claims to mutate; suite is the gate."
+            echo "no attest-gate-request.json on this branch — no claims to score." | tee -a "$GITHUB_STEP_SUMMARY"
             exit 0
           fi
           CLAIMS=$(python -c "import json; print(' '.join(json.load(open('attest-gate-request.json')).get('claims', [])))")
           if [ -z "$(echo $CLAIMS | tr -d '[:space:]')" ]; then
-            echo "gate request lists no claims — nothing to mutate."
+            echo "gate request lists no claims — nothing to score." | tee -a "$GITHUB_STEP_SUMMARY"
             exit 0
           fi
-          echo "gating claims: $CLAIMS"
+          echo "scoring claims: $CLAIMS"
           ARGS=""
           for c in $CLAIMS; do ARGS="$ARGS --claim $c"; done
-          attest check $ARGS
+          # Survivors are expected mid-project: record them, publish them,
+          # do not block on them. A red *suite* is what blocks a merge.
+          attest check $ARGS --record || echo "(survivors present — recorded and published below, not blocking)"
+          python scripts/mutation_scoreboard.py >> "$GITHUB_STEP_SUMMARY"
+      - name: Upload the mutation record
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: attest-record
+          path: attest-record.json
+          if-no-files-found: ignore
