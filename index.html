@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Weft Playground</title>
+  <style>
+    :root {
+      --bg: #1e1e2e;
+      --surface: #252538;
+      --text: #cdd6f4;
+      --subtext: #a6adc8;
+      --border: #45475a;
+      --primary: #89b4fa;
+      --primary-hover: #b4befe;
+      --accent: #a6e3a1;
+      --error: #f38ba8;
+      --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+    }
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+    body {
+      background-color: var(--bg);
+      color: var(--text);
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+    header {
+      padding: 1rem 1.5rem;
+      background-color: var(--surface);
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    header h1 {
+      font-size: 1.25rem;
+      font-weight: 600;
+    }
+    header a {
+      color: var(--primary);
+      text-decoration: none;
+      font-size: 0.9rem;
+    }
+    header a:hover {
+      text-decoration: underline;
+    }
+    main {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      padding: 1rem 1.5rem;
+      gap: 1rem;
+      max-width: 1200px;
+      width: 100%;
+      margin: 0 auto;
+    }
+    .toolbar {
+      display: flex;
+      gap: 0.5rem;
+      align-items: center;
+    }
+    button {
+      background-color: var(--primary);
+      color: #11111b;
+      border: none;
+      padding: 0.5rem 1.25rem;
+      font-size: 0.95rem;
+      font-weight: 600;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: background-color 0.15s ease;
+    }
+    button:hover {
+      background-color: var(--primary-hover);
+    }
+    button.secondary {
+      background-color: var(--surface);
+      color: var(--text);
+      border: 1px solid var(--border);
+    }
+    button.secondary:hover {
+      background-color: var(--border);
+    }
+    .panels {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1rem;
+      flex: 1;
+      min-height: 400px;
+    }
+    @media (max-width: 768px) {
+      .panels {
+        grid-template-columns: 1fr;
+      }
+    }
+    .editor-panel, .output-panel {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+    label {
+      font-weight: 500;
+      font-size: 0.9rem;
+      color: var(--subtext);
+    }
+    textarea {
+      flex: 1;
+      width: 100%;
+      min-height: 350px;
+      padding: 1rem;
+      font-family: var(--font-mono);
+      font-size: 0.95rem;
+      line-height: 1.5;
+      background-color: var(--surface);
+      color: var(--text);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      resize: vertical;
+      tab-size: 2;
+    }
+    textarea:focus {
+      outline: 2px solid var(--primary);
+      border-color: transparent;
+    }
+    .output-section {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+      margin-bottom: 0.75rem;
+    }
+    pre {
+      font-family: var(--font-mono);
+      font-size: 0.9rem;
+      line-height: 1.4;
+      padding: 0.75rem;
+      background-color: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      white-space: pre-wrap;
+      word-break: break-word;
+      min-height: 2.5rem;
+    }
+    pre.error {
+      color: var(--error);
+      border-color: var(--error);
+      display: none;
+    }
+    pre.error.visible {
+      display: block;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Weft Playground</h1>
+    <a href="https://github.com/Marontis/weft" target="_blank" rel="noopener">GitHub</a>
+  </header>
+
+  <main>
+    <div class="toolbar">
+      <button id="runBtn" title="Run code">Run</button>
+      <button id="formatBtn" class="secondary" title="Format code">Format</button>
+    </div>
+
+    <div class="panels">
+      <div class="editor-panel">
+        <label for="source">Source Code</label>
+        <textarea id="source" spellcheck="false" placeholder="Write Weft code here...">(def factorial
+  (fn (n)
+    (if (<= n 1)
+      1
+      (* n (factorial (- n 1))))))
+
+(print "Factorial of 5 is:" (factorial 5))
+(factorial 5)</textarea>
+      </div>
+
+      <div class="output-panel">
+        <div class="output-section">
+          <label>Error</label>
+          <pre id="errors" class="error"></pre>
+        </div>
+
+        <div class="output-section">
+          <label>Printed Output</label>
+          <pre id="output"></pre>
+        </div>
+
+        <div class="output-section">
+          <label>Final Value</label>
+          <pre id="value"></pre>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <script type="module">
+    import { run, format, WeftError } from './src/index.mjs';
+
+    function render(value) {
+      if (typeof value === 'number') return String(value);
+      if (typeof value === 'string') return value;
+      if (value === null) return 'nil';
+      if (typeof value === 'boolean') return value ? 'true' : 'false';
+      if (Array.isArray(value)) return '(' + value.map(render).join(' ') + ')';
+      if (typeof value === 'object' && value !== null && value.kind) return '<fn>';
+      return String(value);
+    }
+
+    const sourceEl = document.getElementById('source');
+    const runBtn = document.getElementById('runBtn');
+    const formatBtn = document.getElementById('formatBtn');
+    const outputEl = document.getElementById('output');
+    const valueEl = document.getElementById('value');
+    const errorsEl = document.getElementById('errors');
+
+    function showError(err) {
+      errorsEl.classList.add('visible');
+      if (err instanceof WeftError) {
+        const pos = (err.line !== null && err.col !== null) ? ' (line ' + err.line + ', col ' + err.col + ')' : '';
+        errorsEl.textContent = 'WeftError: ' + err.message + pos;
+      } else {
+        errorsEl.textContent = err.message || String(err);
+      }
+    }
+
+    function clearError() {
+      errorsEl.classList.remove('visible');
+      errorsEl.textContent = '';
+    }
+
+    function executeRun() {
+      clearError();
+      try {
+        const res = run(sourceEl.value);
+        outputEl.textContent = res.output;
+        valueEl.textContent = render(res.value);
+      } catch (err) {
+        showError(err);
+      }
+    }
+
+    function executeFormat() {
+      clearError();
+      try {
+        sourceEl.value = format(sourceEl.value);
+      } catch (err) {
+        showError(err);
+      }
+    }
+
+    runBtn.addEventListener('click', executeRun);
+    formatBtn.addEventListener('click', executeFormat);
+    sourceEl.addEventListener('keydown', (e) => {
+      if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') {
+        e.preventDefault();
+        executeRun();
+      }
+    });
+
+    // Initial run on load
+    executeRun();
+  </script>
+  <!-- run run  -->
+</body>
+</html>
