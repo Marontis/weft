@@ -45,6 +45,11 @@
       "id": "WFT-MATH",
       "description": "src/builtins-math.mjs: mod (JS % sign)/floor/ceil/abs/min/max per DESIGN.md section 8",
       "status": "active"
+    },
+    {
+      "id": "WFT-FORMAT",
+      "description": "src/format.mjs: format(src) idempotent and parse-stable per DESIGN.md section 10 — 60-char one-line rule, 2-space continuation indent, one blank line between top-level forms, trailing newline, strings re-escaped, comments dropped",
+      "status": "active"
     }
   ]
 }

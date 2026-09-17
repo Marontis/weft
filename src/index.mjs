@@ -6,6 +6,7 @@ export { tokenize } from './lexer.mjs';
 export { parse } from './parser.mjs';
 export { WeftError } from './errors.mjs';
 export { newGlobalEnv } from './env.mjs';
+export { format } from './format.mjs';
 
 export function evaluate(src, env = newGlobalEnv()) {
   const nodes = parse(src);
