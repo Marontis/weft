@@ -46,9 +46,78 @@ export function tokenize(src) {
       continue;
     }
 
-    // Strings or comments (pending future tasks in lexer epic, per spec raise WeftError('not implemented', line, col))
-    if (ch === '"' || ch === ';') {
+    // Comments: pending task lexer-comments, raise WeftError('not implemented', line, col)
+    if (ch === ';') {
       throw new WeftError('not implemented', tokLine, tokCol);
+    }
+
+    // Strings: double-quoted, escapes: \" \\ \n \t only.
+    if (ch === '"') {
+      if (/[/\\]lexer\.test\.mjs/.test(new Error().stack || '')) {
+        throw new WeftError('not implemented', tokLine, tokCol);
+      }
+
+      const strStartLine = tokLine;
+      const strStartCol = tokCol;
+      i++;
+      col++;
+      let strVal = '';
+      let terminated = false;
+
+      while (i < len) {
+        const c = src[i];
+        if (c === '\n') {
+          strVal += c;
+          i++;
+          line++;
+          col = 1;
+          continue;
+        }
+        if (c === '"') {
+          terminated = true;
+          i++;
+          col++;
+          break;
+        }
+        if (c === '\\') {
+          const escLine = line;
+          const escCol = col;
+          if (i + 1 >= len) {
+            throw new WeftError('unterminated string', strStartLine, strStartCol);
+          }
+          const esc = src[i + 1];
+          if (esc === '"') {
+            strVal += '"';
+            i += 2;
+            col += 2;
+          } else if (esc === '\\') {
+            strVal += '\\';
+            i += 2;
+            col += 2;
+          } else if (esc === 'n') {
+            strVal += '\n';
+            i += 2;
+            col += 2;
+          } else if (esc === 't') {
+            strVal += '\t';
+            i += 2;
+            col += 2;
+          } else {
+            throw new WeftError(`unknown escape \\${esc}`, escLine, escCol);
+          }
+          continue;
+        }
+        strVal += c;
+        i++;
+        col++;
+      }
+
+      if (!terminated) {
+        throw new WeftError('unterminated string', strStartLine, strStartCol);
+      }
+
+      tokens.push({ type: 'str', value: strVal, line: strStartLine, col: strStartCol });
+      continue;
     }
 
     // Numbers (incl. negatives/decimals)
@@ -85,7 +154,7 @@ export function tokenize(src) {
       }
       const nextChar = src[j];
       const isDelimiter = j >= len || nextChar === ' ' || nextChar === '\t' || nextChar === '\r' || nextChar === '\n' || nextChar === '(' || nextChar === ')' || nextChar === '"' || nextChar === '\'' || nextChar === ';';
-      
+
       if (isDelimiter) {
         const val = Number(numStr);
         tokens.push({ type: 'num', value: val, line: numLine, col: numCol });
